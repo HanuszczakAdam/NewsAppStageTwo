@@ -57,9 +57,9 @@ public class NewsAdapter extends ArrayAdapter<News> {
 
         String thumbnailUrl = currentNews.getThumbnail();
         viewHolder.thumbnailView = convertView.findViewById(R.id.thumbnail);
-        //viewHolder.thumbnailView.setVisibility(View.VISIBLE);
-        Picasso.with(this.getContext()).load(thumbnailUrl).into(viewHolder.thumbnailView);
-
+        if(thumbnailUrl.equals("no thumbnail")){
+            Picasso.with(this.getContext()).load(R.drawable.no_image_available).into(viewHolder.thumbnailView);
+        } else { Picasso.with(this.getContext()).load(thumbnailUrl).into(viewHolder.thumbnailView); }
         return convertView;
     }
 

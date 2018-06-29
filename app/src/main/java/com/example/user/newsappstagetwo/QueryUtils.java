@@ -24,6 +24,8 @@ import java.util.List;
 public final class QueryUtils {
 
     private static final String LOG_TAG = QueryUtils.class.getSimpleName();
+    private static final int READ_TIMEOUT = 10000;
+    private static final int CONNECT_TIMEOUT = 15000;
 
     private QueryUtils(){
 
@@ -60,18 +62,18 @@ public final class QueryUtils {
         InputStream inputStream = null;
         try {
             urlConnection = (HttpURLConnection) url.openConnection();
-            urlConnection.setReadTimeout(10000);
-            urlConnection.setConnectTimeout(15000);
+            urlConnection.setReadTimeout(READ_TIMEOUT);
+            urlConnection.setConnectTimeout(CONNECT_TIMEOUT);
             urlConnection.setRequestMethod("GET");
             urlConnection.connect();
-            if(urlConnection.getResponseCode() == 200){
+            if(urlConnection.getResponseCode() == HttpURLConnection.HTTP_OK){
                 inputStream = urlConnection.getInputStream();
                 jsonResponse = readFromStream(inputStream);
             } else {
                 Log.e(LOG_TAG, "Error response code: " + urlConnection.getResponseCode());
             }
         } catch (IOException e){
-            Log.e(LOG_TAG, "Problem retrieving the earthquake JSON results.", e);
+            Log.e(LOG_TAG, "Problem retrieving the news JSON results.", e);
         } finally {
             if(urlConnection != null)
                 urlConnection.disconnect();
@@ -117,30 +119,34 @@ public final class QueryUtils {
         try {
 
             JSONObject baseJsonResponse = new JSONObject(newsJSON);
-            JSONObject responseObject = baseJsonResponse.getJSONObject("response");
-            JSONArray newsArray = responseObject.getJSONArray("results");
+            JSONObject responseObject = baseJsonResponse.optJSONObject("response");
+            JSONArray newsArray = responseObject.optJSONArray("results");
 
             for(int i = 0; i < newsArray.length(); i++){
-                JSONObject currentNews = newsArray.getJSONObject(i);
-                String sectionName = currentNews.getString("sectionName");
+                JSONObject currentNews = newsArray.optJSONObject(i);
+                String sectionName = currentNews.optString("sectionName");
 
-                String publicationDate = currentNews.getString("webPublicationDate");
+                String publicationDate = currentNews.optString("webPublicationDate");
                 publicationDate = formatDate(publicationDate);
 
-                String webTitle = currentNews.getString("webTitle");
-                String url = currentNews.getString("webUrl");
+                String webTitle = currentNews.optString("webTitle");
+
+                String url = currentNews.optString("webUrl");
                 url = url.replace("\\","");
 
-                JSONArray tags = currentNews.getJSONArray("tags");
+                JSONArray tags = currentNews.optJSONArray("tags");
                 String articleAuthor;
                 if(tags.length()!=0) {
-                    JSONObject tagsObject = tags.getJSONObject(0);
-                    articleAuthor = tagsObject.getString("webTitle");
+                    JSONObject tagsObject = tags.optJSONObject(0);
+                    articleAuthor = tagsObject.optString("webTitle");
                 } else { articleAuthor = "no Author"; }
 
-                JSONObject fields = currentNews.getJSONObject("fields");
-                String thumbnail = fields.getString("thumbnail");
-                thumbnail = thumbnail.replace("\\","");
+                JSONObject fields = currentNews.optJSONObject("fields");
+                String thumbnail;
+                if(fields.length() != 0){
+                    thumbnail = fields.optString("thumbnail");
+                    thumbnail = thumbnail.replace("\\","");
+                } else { thumbnail = "no thumbnail"; }
 
                 News news = new News(sectionName, publicationDate, webTitle, url, articleAuthor, thumbnail);
                 newsList.add(news);

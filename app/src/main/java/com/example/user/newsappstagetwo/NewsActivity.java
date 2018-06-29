@@ -12,6 +12,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -27,7 +28,6 @@ public class NewsActivity extends AppCompatActivity
 
     private static final String GUARDIAN_REQUEST_URL =
               "https://content.guardianapis.com/search";
-//            "https://content.guardianapis.com/search?show-tags=contributor&page-size=30&q=android&api-key=4d2a23dc-bb4c-4556-96a1-09e35b3fd383";
     private static final int NEWS_LOADER_ID = 1;
     private NewsAdapter mAdapter;
     private TextView mEmptyStateTextView;
@@ -81,13 +81,10 @@ public class NewsActivity extends AppCompatActivity
                 getString(R.string.settings_order_by_key),
                 getString(R.string.settings_order_by_default));
 
-        // parse breaks apart the URI string that's passed into its parameter
         Uri baseUri = Uri.parse(GUARDIAN_REQUEST_URL);
 
-        // buildUpon prepares the baseUri that we just parsed so we can add query parameters to it
         Uri.Builder uriBuilder = baseUri.buildUpon();
 
-        // Append query parameter and its value. For example, the `format=geojson`
         uriBuilder.appendQueryParameter("show-tags", "contributor");
         uriBuilder.appendQueryParameter("show-fields", "thumbnail");
         uriBuilder.appendQueryParameter("page-size", pageSize);
