@@ -89,6 +89,7 @@ public class NewsActivity extends AppCompatActivity
 
         // Append query parameter and its value. For example, the `format=geojson`
         uriBuilder.appendQueryParameter("show-tags", "contributor");
+        uriBuilder.appendQueryParameter("show-fields", "thumbnail");
         uriBuilder.appendQueryParameter("page-size", pageSize);
         uriBuilder.appendQueryParameter("order-by", orderBy);
         uriBuilder.appendQueryParameter("q", subject);

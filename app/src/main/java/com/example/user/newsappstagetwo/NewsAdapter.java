@@ -10,6 +10,8 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.squareup.picasso.Picasso;
+
 import java.util.List;
 
 public class NewsAdapter extends ArrayAdapter<News> {
@@ -54,11 +56,9 @@ public class NewsAdapter extends ArrayAdapter<News> {
         viewHolder.authorView.setText("Author: " + author);
 
         String thumbnailUrl = currentNews.getThumbnail();
-        viewHolder.thumbnailView = convertView.findViewById(R.id.networkThumbnail);
-        viewHolder.thumbnailView.setVisibility(View.VISIBLE);
-
-        Ima
-
+        viewHolder.thumbnailView = convertView.findViewById(R.id.thumbnail);
+        //viewHolder.thumbnailView.setVisibility(View.VISIBLE);
+        Picasso.with(this.getContext()).load(thumbnailUrl).into(viewHolder.thumbnailView);
 
         return convertView;
     }

@@ -138,8 +138,11 @@ public final class QueryUtils {
                     articleAuthor = tagsObject.getString("webTitle");
                 } else { articleAuthor = "no Author"; }
 
+                JSONObject fields = currentNews.getJSONObject("fields");
+                String thumbnail = fields.getString("thumbnail");
+                thumbnail = thumbnail.replace("\\","");
 
-                News news = new News(sectionName, publicationDate, webTitle, url, articleAuthor);
+                News news = new News(sectionName, publicationDate, webTitle, url, articleAuthor, thumbnail);
                 newsList.add(news);
             }
 
